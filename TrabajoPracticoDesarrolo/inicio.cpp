@@ -7,6 +7,12 @@
 
 using namespace std;
 
+enum Prioridades{
+    alta = 1,
+    media = 2,
+    baja = 3
+};
+
 struct Paty
 {
 	double precio;
@@ -80,6 +86,84 @@ struct Hamburguesa
 	ListaPaty *patys;
 	ListaPanceta *pancetas;
 	ListaCheddar *cheddars;
+	double precioBruto;
+	double precioNeto;
+};
+
+struct NodoHamburguesa
+{
+	Hamburguesa hamburguesa;
+	NodoHamburguesa *siguiente;
+};
+
+struct ListaHamburguesa
+{
+	NodoHamburguesa *primerHamburguesa;
+};
+
+struct Juguete
+{
+	double precio;
+	string caricatura;
+};
+
+struct Combo
+{
+	Gaseosa bebida;
+	Juguete juguete;
+	ListaHamburguesa *hamburguesas;
+	double precioBruto;
+	double precioNeto;
+};
+
+struct NodoCombo
+{
+	Combo combo;
+	NodoCombo *siguiente;
+};
+
+struct ListaCombo
+{
+	NodoCombo *primerCombo
+};
+
+struct Pedido
+{
+	ListaCombo *combos;
+	Prioridades prioridad;
+	double precioBruto;
+	double precioNeto;
+};
+
+struct NodoPedido
+{
+	Pedido pedido;
+	NodoPedido *siguiente;
+};
+
+struct ListaPedido
+{
+	NodoPedido *primerCombo;
+};
+
+struct Cliente
+{
+	string nombre;
+	Prioridades prioridad;
+};
+
+struct Repartidor
+{
+	int cantidadDePedidos;
+	int cansancio;
+	string nombre;
+	string apellido;
+};
+
+struct Semana
+{
+	ListaPedido *pedidos;
+	double contaduria;
 };
 
 Paty *patyCreate(double precio, int grasa, double grosor) {
