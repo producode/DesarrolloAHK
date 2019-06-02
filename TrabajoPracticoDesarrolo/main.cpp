@@ -124,7 +124,7 @@ struct NodoCombo
 
 struct ListaCombo
 {
-	NodoCombo *primerCombo
+	NodoCombo *primerCombo;
 };
 
 struct Pedido
@@ -143,7 +143,7 @@ struct NodoPedido
 
 struct ListaPedido
 {
-	NodoPedido *primerCombo;
+	NodoPedido *primerPedido;
 };
 
 struct Cliente
@@ -218,11 +218,18 @@ Combo *comboCreate(Gaseosa bebida, Juguete juguete){
     return nuevoCombo;
 }
 
+Pedido *pedidoCreate(Gaseosa bebida, Juguete juguete){
+    Pedido *nuevoPedido = new Pedido;
+    return nuevoCombo;
+}
+
 double calcularIVA(double precio) {
 	double resultado = (precio / 100) * 21;
 	resultado += precio;
 	return resultado;
 }
+
+//funciones auxiliares para gregar elementos
 
 void *nodoPancetaCreate(Panceta nuevaPanceta,NodoPanceta *NodoAuxiliar){
 	NodoAuxiliar->siguientePanceta = new NodoPanceta;
@@ -244,6 +251,15 @@ void *nodoHamburguesaCreate(Hamburguesa nuevaHambueguesa,NodoHamburguesa *NodoAu
 	NodoAuxiliar->hamburguesa = nuevaHambueguesa;
 	NodoAuxiliar->siguiente = NULL;
 }
+
+void *nodoComboCreate(Combo nuevoCombo,NodoCombo *NodoAuxiliar){
+	NodoAuxiliar->siguiente = new NodoCombo;
+	NodoAuxiliar = NodoAuxiliar->siguiente;
+	NodoAuxiliar->combo = nuevoCombo;
+	NodoAuxiliar->siguiente = NULL;
+}
+
+//funciones para agregar elementos a listas
 
 void agregarPanceta(Panceta nuevaPanceta, Hamburguesa *nuevaHamburguesa) {
 	if (nuevaHamburguesa->pancetas->primerPanceta == NULL) {
@@ -290,6 +306,23 @@ void agregarHamburguesa(Hamburguesa nuevaHamburguesa, Combo *nuevoCombo) {
 	}
 }
 
+void agregarCombo(Combo nuevoCombo, Pedido *nuevoPedido) {
+	if (nuevoPedido->combos->primerCombo == NULL) {
+		nuevoPedido->combos->primerCombo = new NodoCombo;
+		nuevoPedido->combos->primerCombo->combo = nuevoCombo;
+		nuevoPedido->combos->primerCombo->siguiente = NULL;
+	}
+	else {
+		NodoCombo *NodoAuxiliar = nuevoPedido->combos->primerCombo;
+		while (NodoAuxiliar->siguiente != NULL) {
+			NodoAuxiliar = NodoAuxiliar->siguiente;
+		}
+		NodoComboCreate(nuevoCombo, NodoAuxiliar);
+	}
+}
+
+//funciones auxiliares para el calculo de precios
+
 double obtenerTotalPancetas(NodoPanceta nodoAuxiliar){
 	if(nodoAuxiliar->siguientePanceta == NULL){
         return nodoAuxiliar->pancetaIngrediente->precio;
@@ -334,6 +367,19 @@ double obtenerTotalHamburguesas(NodoHamburguesa nodoAuxiliar){
 	}
 }
 
+double obtenerTotalCombos(NodoCombo nodoAuxiliar){
+	if(nodoAuxiliar->siguiente == NULL){
+        return nodoAuxiliar->combo->precioNeto;
+	}
+	else{
+        double total = nodoAuxiliar->combo->precioNeto;
+        total = total + obtenerTotalCombos(nodoAuxiliar->siguiente);
+        return total;
+	}
+}
+
+// Calculos de totales
+
 double hamburguesaCalcularPrecio(Hamburguesa *hamburguesaCalculo){
     double total = 0;
     total = obtenerTotalCheddar(hamburguesaCalculo->cheddars->primerCheddar);
@@ -347,6 +393,13 @@ double comboCalcularPrecio(Combo *comboCalculo){
     total = obtenerTotalHamburguesas(comboCalculo->hamburguesas->primerHamburguesa);
     total = total + comboCalculo->bebida->precio;
     total = total + comboCalculo->juguete->precio;
+    return total;
+}
+
+double pedidoCalcularPrecio(Pedido *pedidoCalculo){
+    double total = 0;
+    total = obtenerTotalCombos(pedidoCalculo->combos->primerCombo);
+    return total;
 }
 
 int main()
