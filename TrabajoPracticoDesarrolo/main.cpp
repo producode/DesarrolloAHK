@@ -201,12 +201,21 @@ Pan *panCreate(double precio,bool integral) {
 	Pan *nuevoPan = new Pan;
 	nuevoPan->precio = precio;
 	nuevoPan->integral = integral;
+	return nuevoPan;
 }
 
 Hamburguesa *hamburguesaCreate(Pan panSuperior,Pan panInferior) {
 	Hamburguesa *nuevaHamburguesa = new Hamburguesa;
 	nuevaHamburguesa->panSuperior = panSuperior;
 	nuevaHamburguesa->panInferior = panInferior;
+	return nuevaHamburguesa;
+}
+
+Combo *comboCreate(Gaseosa bebida, Juguete juguete){
+    Combo *nuevoCombo = new Combo;
+    nuevoCombo->bebida = bebida;
+    nuevoCombo->juguete = juguete;
+    return nuevoCombo;
 }
 
 double calcularIVA(double precio) {
@@ -221,11 +230,19 @@ void *nodoPancetaCreate(Panceta nuevaPanceta,NodoPanceta *NodoAuxiliar){
 	NodoAuxiliar->pancetaIngrediente = nuevaPanceta;
 	NodoAuxiliar->siguientePanceta = NULL;
 }
+
 void *nodoCheddarCreate(Cheddar nuevaCheddar, NodoCheddar *NodoAuxiliar) {
 	NodoAuxiliar->siguienteCheddar = new NodoCheddar;
 	NodoAuxiliar = NodoAuxiliar->siguienteCheddar;
 	NodoAuxiliar->cheddarIngrediente = nuevaCheddar;
 	NodoAuxiliar->siguienteCheddar = NULL;
+}
+
+void *nodoHamburguesaCreate(Hamburguesa nuevaHambueguesa,NodoHamburguesa *NodoAuxiliar){
+	NodoAuxiliar->siguiente = new NodoHamburguesa;
+	NodoAuxiliar = NodoAuxiliar->siguiente;
+	NodoAuxiliar->hamburguesa = nuevaHambueguesa;
+	NodoAuxiliar->siguiente = NULL;
 }
 
 void agregarPanceta(Panceta nuevaPanceta, Hamburguesa *nuevaHamburguesa) {
@@ -255,6 +272,21 @@ void agregarCheddar(Cheddar nuevaCheddar, Hamburguesa *nuevaHamburguesa) {
 			NodoAuxiliar = NodoAuxiliar->siguienteCheddar;
 		}
 		nodoCheddarCreate(nuevaCheddar, NodoAuxiliar);
+	}
+}
+
+void agregarHamburguesa(Hamburguesa nuevaHamburguesa, Combo *nuevoCombo) {
+	if (nuevoCombo->hamburguesas->primerHamburguesa == NULL) {
+		nuevoCombo->hamburguesas->primerHamburguesa = new NodoHamburguesa;
+		nuevoCombo->hamburguesas->primerHamburguesa->hamburguesa = nuevaHamburguesa;
+		nuevoCombo->hamburguesas->primerHamburguesa->siguiente = NULL;
+	}
+	else {
+		NodoHamburguesa *NodoAuxiliar = nuevoCombo->hamburguesas->primerHamburguesa;
+		while (NodoAuxiliar->siguiente != NULL) {
+			NodoAuxiliar = NodoAuxiliar->siguiente;
+		}
+		nodoHamburguesaCreate(nuevaHamburguesa, NodoAuxiliar);
 	}
 }
 
