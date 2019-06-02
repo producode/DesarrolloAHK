@@ -258,6 +258,11 @@ void agregarCheddar(Cheddar nuevaCheddar, Hamburguesa *nuevaHamburguesa) {
 	}
 }
 
+double obtenerTotalPancetas(Hamburguesa buscarHamburguesa){
+	NodoPanceta nodoAuxiliar;
+	nodoAuxiliar = buscarHamburguesa->pancetas->primerPanceta;
+}
+
 int main()
 {
     
