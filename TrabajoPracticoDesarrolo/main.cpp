@@ -258,9 +258,45 @@ void agregarCheddar(Cheddar nuevaCheddar, Hamburguesa *nuevaHamburguesa) {
 	}
 }
 
-double obtenerTotalPancetas(Hamburguesa buscarHamburguesa){
-	NodoPanceta nodoAuxiliar;
-	nodoAuxiliar = buscarHamburguesa->pancetas->primerPanceta;
+double obtenerTotalPancetas(NodoPanceta nodoAuxiliar){
+	if(nodoAuxiliar->siguientePanceta == NULL){
+        return nodoAuxiliar->pancetaIngrediente->precio;
+	}
+	else{
+        double total = nodoAuxiliar->pancetaIngrediente->precio;
+        total = total + obtenerTotalPancetas(nodoAuxiliar->siguientePanceta);
+        return total;
+	}
+}
+
+double obtenerTotalCheddar(NodoCheddar nodoAuxiliar){
+	if(nodoAuxiliar->siguienteCheddar == NULL){
+        return nodoAuxiliar->cheddarIngrediente->precio;
+	}
+	else{
+        double total = nodoAuxiliar->cheddarIngrediente->precio;
+        total = total + obtenerTotalCheddar(nodoAuxiliar->siguienteCheddar);
+        return total;
+	}
+}
+
+double obtenerTotalPatys(NodoPaty nodoAuxiliar){
+	if(nodoAuxiliar->siguientePaty == NULL){
+        return nodoAuxiliar->patyIngrediente->precio;
+	}
+	else{
+        double total = nodoAuxiliar->patyIngrediente->precio;
+        total = total + obtenerTotalPatys(nodoAuxiliar->siguientePaty);
+        return total;
+	}
+}
+
+double hamburguesaCalcularPrecio(Hamburguesa *hamburguesaCalculo){
+    double total = 0;
+    total = obtenerTotalCheddar(*hamburguesaCalculo->cheddars->primerCheddar);
+    total = total + obtenerTotalPancetas(*hamburguesaCalculo->pancetas->primerPanceta);
+    total = total + obtenerTotalPatys(*hamburguesaCalculo->patys->primerPaty);
+    return ((total/100)*110);
 }
 
 int main()
