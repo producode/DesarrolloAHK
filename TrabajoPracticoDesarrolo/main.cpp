@@ -323,12 +323,30 @@ double obtenerTotalPatys(NodoPaty nodoAuxiliar){
 	}
 }
 
+double obtenerTotalHamburguesas(NodoHamburguesa nodoAuxiliar){
+	if(nodoAuxiliar->siguiente == NULL){
+        return nodoAuxiliar->hamburguesa->precioNeto;
+	}
+	else{
+        double total = nodoAuxiliar->hamburguesa->precioNeto;
+        total = total + obtenerTotalHamburguesas(nodoAuxiliar->siguiente);
+        return total;
+	}
+}
+
 double hamburguesaCalcularPrecio(Hamburguesa *hamburguesaCalculo){
     double total = 0;
-    total = obtenerTotalCheddar(*hamburguesaCalculo->cheddars->primerCheddar);
-    total = total + obtenerTotalPancetas(*hamburguesaCalculo->pancetas->primerPanceta);
-    total = total + obtenerTotalPatys(*hamburguesaCalculo->patys->primerPaty);
+    total = obtenerTotalCheddar(hamburguesaCalculo->cheddars->primerCheddar);
+    total = total + obtenerTotalPancetas(hamburguesaCalculo->pancetas->primerPanceta);
+    total = total + obtenerTotalPatys(hamburguesaCalculo->patys->primerPaty);
     return ((total/100)*110);
+}
+
+double comboCalcularPrecio(Combo *comboCalculo){
+    double total = 0;
+    total = obtenerTotalHamburguesas(comboCalculo->hamburguesas->primerHamburguesa);
+    total = total + comboCalculo->bebida->precio;
+    total = total + comboCalculo->juguete->precio;
 }
 
 int main()
