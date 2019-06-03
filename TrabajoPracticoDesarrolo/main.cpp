@@ -166,6 +166,17 @@ struct Semana
 	double contaduria;
 };
 
+struct NodoCliente
+{
+    Cliente cliente;
+    NodoCliente *siguiente;
+};
+
+struct ListaCliente
+{
+    NodoCliente *primerCliente;
+};
+
 Paty *patyCreate(double precio, int grasa, double grosor) {
 	Paty *nuevoPaty = new Paty;
 	nuevoPaty->precio = precio;
@@ -400,6 +411,75 @@ double pedidoCalcularPrecio(Pedido *pedidoCalculo){
     double total = 0;
     total = obtenerTotalCombos(pedidoCalculo->combos->primerCombo);
     return total;
+}
+
+struct TiposClientes
+{
+    ListaCliente *altaPrioridad;
+    ListaCliente *mediaPrioridad;
+    ListaCliente *bajaPrioridad;
+};
+
+void ordenarClientes(ListaCliente *clientesOrdenar){
+    NodoCliente nodoAuxiliar = clientesOrdenar->primerCliente;
+    diferenciar(clientesOrdenar->primerCliente);
+    clientesOrdenar->primerCliente = listaAuxiliar->altaPrioridad;
+    agregarAlFinalCliente(clientesOrdenar->primerCliente,listaAuxiliar->mediaPrioridad);
+    agregarAlFinalCliente(clientesOrdenar->primerCliente,listaAuxiliar->bajaPrioridad);
+}
+
+void agregarAlFinalCliente(NodoCliente *clienteAgregar,NodoCliente *clienteSiguiente){
+    if(clienteAgregar->siguiente == NULL){
+        cliente->siguiente = clienteSiguiente;
+    }
+    else{
+        agregarAlFinalCliente(cliente->siguiente,clienteSiguiente);
+    }
+}
+
+TiposClientes listaAuxiliar = new TiposClientes;
+void diferenciar(NodoCliente *clienteActual){
+    if(clienteActual->cliente->prioridad == alta){
+        if(listaAuxiliar->altaPrioridad->primerCliente == NULL){
+            listaAuxiliar->altaPrioridad->primerCliente = new NodoCliente;
+            listaAuxiliar->altaPrioridad->primerCliente->cliente = clienteActual->cliente;
+            listaAuxiliar->altaPrioridad->primerCliente->siguiente = NULL;
+        }
+        else{
+            agregarListaAuxiliar(listaAuxiliar->altaPrioridad->primerCliente,clienteActual->cliente);
+        }
+    }
+    else if(clienteActual->cliente->prioridad == media){
+        if(listaAuxiliar->mediaPrioridad->primerCliente == NULL){
+            listaAuxiliar->mediaPrioridad->primerCliente = new NodoCliente;
+            listaAuxiliar->mediaPrioridad->primerCliente->cliente = clienteActual->cliente;
+            listaAuxiliar->mediaPrioridad->primerCliente->siguiente = NULL;
+        }
+        else{
+            agregarListaAuxiliar(listaAuxiliar->mediaPrioridad->primerCliente,clienteActual->cliente);
+        }
+    }
+    else if(clienteActual->cliente->prioridad == baja){
+        if(listaAuxiliar->bajaPrioridad->primerCliente == NULL){
+            listaAuxiliar->bajaPrioridad->primerCliente = new NodoCliente;
+            listaAuxiliar->bajaPrioridad->primerCliente->cliente = clienteActual->cliente;
+            listaAuxiliar->bajaPrioridad->primerCliente->siguiente = NULL;
+        }
+        else{
+            agregarListaAuxiliar(listaAuxiliar->bajaPrioridad->primerCliente,clienteActual->cliente);
+        }
+    }
+}
+
+void agregarListaAuxiliar(NodoCliente *cliente, Cliente clienteAgregar){
+    if(clienteAgregar->siguiente == NULL){
+        NodoCliente nodoAuxiliar = new NodoCliente;
+        nodoAuxiliar->cliente = clienteAgregar;
+        cliente->siguiente = nodoAuxiliar;
+    }
+    else{
+        agregarListaAuxiliar(cliente->siguiente,clienteAgregar);
+    }
 }
 
 int main()
