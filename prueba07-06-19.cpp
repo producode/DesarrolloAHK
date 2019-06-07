@@ -181,7 +181,7 @@ struct Factura
 struct Cuenta
 {
 	string tipo;
-	int valor;
+	double valor;
 };
 
 struct NodoCuentas
@@ -254,15 +254,6 @@ Factura *facturaCreate(facturas tipo, double importe, Automovil *autoVendido, st
 	return nuevaFactura;
 }
 
-Movimiento *movimientoCreate(string fecha, string hora, ListaCuentas *cuentas, Factura *factura) {
-	Movimiento *nuevoMovimiento = new Movimiento;
-	nuevoMovimiento->fecha = fecha;
-	nuevoMovimiento->hora = hora;
-	nuevoMovimiento->factura = factura;
-	modificarCuentas(cuentas->primerCuenta, cuentas->primerCuenta, *factura,new ListaAsientos);
-	return nuevoMovimiento;
-}
-
 DiarioContable *diarioContableCreate(int anio, ListaMovimientos *movimientos) {
 	DiarioContable *nuevoDiarioContable = new DiarioContable;
 	nuevoDiarioContable->anio = anio;
@@ -275,45 +266,6 @@ Cuenta *cuentaCreate(string tipo, int valor) {
 	cuenta->tipo = tipo;
 	cuenta->valor = valor;
 	return cuenta;
-}
-
-void modificarCuentas(NodoCuentas *inicial,NodoCuentas *cuenta, Factura factura,ListaAsientos *asientos) {
-	if (factura.tipoPago == 0) {
-		if (cuenta->cuenta.tipo == "Mercaderia") {
-			cuenta->cuenta.valor = cuenta->cuenta.valor - factura.autoVendido->valorResidual;
-			agregarAsiento(asientos->primerAsiento, "- Mercaderia $" + to_string(factura.autoVendido->valorResidual));
-		}
-		else if (cuenta->cuenta.tipo == "Caja") {
-			cuenta->cuenta.valor = cuenta->cuenta.valor + factura.importe;
-			agregarAsiento(asientos->primerAsiento, "+ Caja $" + to_string(factura.importe));
-		}
-		else if (cuenta->cuenta.tipo == "Ventas") {
-			NodoCuentas cuentaMercaderia = buscarCuenta(inicial,"Mercaderia");
-			NodoCuentas cuentaCaja = buscarCuenta(inicial,"Caja");
-			cuenta->cuenta.valor = cuenta->cuenta.valor + (cuentaCaja.cuenta.valor - cuentaMercaderia.cuenta.valor);
-			agregarAsiento(asientos->primerAsiento, "+ Ventas $" + to_string(cuentaCaja.cuenta.valor - cuentaMercaderia.cuenta.valor));
-		}
-	}
-	else if (factura.tipoPago == 1) {
-		if (cuenta->cuenta.tipo == "Mercaderia") {
-			cuenta->cuenta.valor = cuenta->cuenta.valor - factura.autoVendido->valorResidual;
-			agregarAsiento(asientos->primerAsiento, "- Mercaderia $" + to_string(factura.autoVendido->valorResidual));
-		}
-		else if (cuenta->cuenta.tipo == "Deudores por ventas") {
-			cuenta->cuenta.valor = cuenta->cuenta.valor + (factura.importe * 1.15);
-			agregarAsiento(asientos->primerAsiento, "+ Deudores por venta $" + to_string(factura.importe * 1.15));
-		}
-		else if (cuenta->cuenta.tipo == "Intereses ganados") {
-			cuenta->cuenta.valor = cuenta->cuenta.valor + (factura.importe * 0.15);
-			agregarAsiento(asientos->primerAsiento, "+ Intereses ganados $" + to_string(factura.importe * 0.15));
-		}
-		else if (cuenta->cuenta.tipo == "Ventas") {
-			NodoCuentas cuentaMercaderia = buscarCuenta(inicial, "Mercaderia");
-			NodoCuentas cuentaDeudores = buscarCuenta(inicial, "Deudores por venta");
-			cuenta->cuenta.valor = cuenta->cuenta.valor + (cuentaDeudores.cuenta.valor - cuentaMercaderia.cuenta.valor);
-			agregarAsiento(asientos->primerAsiento, "+ Ventas $" + to_string(cuentaDeudores.cuenta.valor - cuentaMercaderia.cuenta.valor));
-		}
-	}
 }
 
 void agregarAsiento(NodoAsiento *asiento, string asientoAgregar) {
@@ -351,6 +303,55 @@ NodoCuentas buscarCuenta(NodoCuentas* cuenta, string tipo) {
 		return buscarCuenta(cuenta->siguiente, tipo);
 	}
 }
+
+void modificarCuentas(NodoCuentas *inicial, NodoCuentas *cuenta, Factura factura, ListaAsientos *asientos) {
+	if (factura.tipoPago == 0) {
+		if (cuenta->cuenta.tipo == "Mercaderia") {
+			cuenta->cuenta.valor = cuenta->cuenta.valor - factura.autoVendido->valorResidual;
+			agregarAsiento(asientos->primerAsiento, "- Mercaderia $" + to_string(factura.autoVendido->valorResidual));
+		}
+		else if (cuenta->cuenta.tipo == "Caja") {
+			cuenta->cuenta.valor = cuenta->cuenta.valor + factura.importe;
+			agregarAsiento(asientos->primerAsiento, "+ Caja $" + to_string(factura.importe));
+		}
+		else if (cuenta->cuenta.tipo == "Ventas") {
+			NodoCuentas cuentaMercaderia = buscarCuenta(inicial, "Mercaderia");
+			NodoCuentas cuentaCaja = buscarCuenta(inicial, "Caja");
+			cuenta->cuenta.valor = cuenta->cuenta.valor + (cuentaCaja.cuenta.valor - cuentaMercaderia.cuenta.valor);
+			agregarAsiento(asientos->primerAsiento, "+ Ventas $" + to_string(cuentaCaja.cuenta.valor - cuentaMercaderia.cuenta.valor));
+		}
+	}
+	else if (factura.tipoPago == 1) {
+		if (cuenta->cuenta.tipo == "Mercaderia") {
+			cuenta->cuenta.valor = cuenta->cuenta.valor - factura.autoVendido->valorResidual;
+			agregarAsiento(asientos->primerAsiento, "- Mercaderia $" + to_string(factura.autoVendido->valorResidual));
+		}
+		else if (cuenta->cuenta.tipo == "Deudores por ventas") {
+			cuenta->cuenta.valor = cuenta->cuenta.valor + (factura.importe * 1.15);
+			agregarAsiento(asientos->primerAsiento, "+ Deudores por venta $" + to_string(factura.importe * 1.15));
+		}
+		else if (cuenta->cuenta.tipo == "Intereses ganados") {
+			cuenta->cuenta.valor = cuenta->cuenta.valor + (factura.importe * 0.15);
+			agregarAsiento(asientos->primerAsiento, "+ Intereses ganados $" + to_string(factura.importe * 0.15));
+		}
+		else if (cuenta->cuenta.tipo == "Ventas") {
+			NodoCuentas cuentaMercaderia = buscarCuenta(inicial, "Mercaderia");
+			NodoCuentas cuentaDeudores = buscarCuenta(inicial, "Deudores por venta");
+			cuenta->cuenta.valor = cuenta->cuenta.valor + (cuentaDeudores.cuenta.valor - cuentaMercaderia.cuenta.valor);
+			agregarAsiento(asientos->primerAsiento, "+ Ventas $" + to_string(cuentaDeudores.cuenta.valor - cuentaMercaderia.cuenta.valor));
+		}
+	}
+}
+
+Movimiento *movimientoCreate(string fecha, string hora, ListaCuentas *cuentas, Factura *factura) {
+	Movimiento *nuevoMovimiento = new Movimiento;
+	nuevoMovimiento->fecha = fecha;
+	nuevoMovimiento->hora = hora;
+	nuevoMovimiento->factura = factura;
+	modificarCuentas(cuentas->primerCuenta, cuentas->primerCuenta, *factura, new ListaAsientos);
+	return nuevoMovimiento;
+}
+
 int main()
 {
 	int opcion = 1;
