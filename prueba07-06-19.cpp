@@ -187,7 +187,7 @@ struct Cuenta
 struct NodoCuentas
 {
 	Cuenta cuenta;
-	NodoCuentas *siguiente;
+	NodoCuentas *siguiente = NULL;
 };
 
 struct ListaCuentas
@@ -198,7 +198,7 @@ struct ListaCuentas
 struct NodoAsiento
 {
 	string Asiento;
-	NodoAsiento *siquiente;
+	NodoAsiento *siquiente = NULL;
 };
 
 struct ListaAsientos
@@ -218,7 +218,7 @@ struct Movimiento
 struct NodoMovimiento
 {
 	Movimiento movimiento;
-	NodoMovimiento *siguiente;
+	NodoMovimiento *siguiente = NULL;
 };
 
 struct ListaMovimientos
@@ -271,6 +271,7 @@ Cuenta *cuentaCreate(string tipo, int valor) {
 void agregarAsiento(NodoAsiento *asiento, string asientoAgregar) {
 	if (asiento->siquiente == NULL) {
 		asiento->Asiento = asientoAgregar;
+		asiento->siquiente = NULL;
 	}
 	else {
 		agregarAsiento(asiento->siquiente, asientoAgregar);
@@ -280,6 +281,7 @@ void agregarAsiento(NodoAsiento *asiento, string asientoAgregar) {
 void agregarCuenta(NodoCuentas *cuentas, Cuenta cuenta) {
 	if (cuentas->siguiente == NULL) {
 		cuentas->cuenta = cuenta;
+		cuentas->siguiente = NULL;
 	}
 	else {
 		agregarCuenta(cuentas->siguiente, cuenta);
@@ -289,6 +291,7 @@ void agregarCuenta(NodoCuentas *cuentas, Cuenta cuenta) {
 void agregarMovimiento(NodoMovimiento *movimiento, Movimiento mov) {
 	if (movimiento->siguiente == NULL) {
 		movimiento->movimiento = mov;
+		movimiento->siguiente = NULL;
 	}
 	else {
 		agregarMovimiento(movimiento->siguiente, mov);
@@ -348,7 +351,9 @@ Movimiento *movimientoCreate(string fecha, string hora, ListaCuentas *cuentas, F
 	nuevoMovimiento->fecha = fecha;
 	nuevoMovimiento->hora = hora;
 	nuevoMovimiento->factura = factura;
-	modificarCuentas(cuentas->primerCuenta, cuentas->primerCuenta, *factura, new ListaAsientos);
+	ListaAsientos *asientos = new ListaAsientos;
+	asientos->primerAsiento = new NodoAsiento;
+	modificarCuentas(cuentas->primerCuenta, cuentas->primerCuenta, *factura, asientos);
 	return nuevoMovimiento;
 }
 
@@ -372,10 +377,12 @@ int main()
 		Automovil *vehiculo;
 		Factura *factura;
 		Movimiento *movimiento;
-		ListaCuentas *cuentas;
+		ListaCuentas *cuentas = new ListaCuentas;
 		DiarioContable *diarioContable;
-		ListaMovimientos *movimientos;
-		
+		ListaMovimientos *movimientos = new ListaMovimientos;
+		cuentas->primerCuenta = new NodoCuentas;
+		cuentas->primerCuenta->siguiente = NULL;
+		movimientos->primerMovimiento = new NodoMovimiento;
 		agregarCuenta(cuentas->primerCuenta, *cuentaCreate("Mercaderia", 720000));
 		agregarCuenta(cuentas->primerCuenta, *cuentaCreate("Caja", 720000));
 		agregarCuenta(cuentas->primerCuenta, *cuentaCreate("Ventas", 720000));
@@ -386,8 +393,7 @@ int main()
 		movimiento = movimientoCreate(factura->fecha, "12:44", cuentas, factura);
 		agregarMovimiento(movimientos->primerMovimiento, *movimiento);
 		diarioContable = diarioContableCreate(2017, movimientos);
-		break;
-	default:
+		int a = 1;
 		break;
 	}
 	
