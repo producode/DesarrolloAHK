@@ -229,9 +229,18 @@ Combo *comboCreate(Gaseosa bebida, Juguete juguete){
     return nuevoCombo;
 }
 
-Pedido *pedidoCreate(Gaseosa bebida, Juguete juguete){
+Pedido *pedidoCreate(){
     Pedido *nuevoPedido = new Pedido;
-    return nuevoCombo;
+    return nuevoPedido;
+}
+
+Repartidor *repartidorCreate(string nombre,string apellido){
+    Repartidor *nuevoRepartidor = new Repartidor;
+    nuevoRepartidor->nombre = nombre;
+    nuevoRepartidor->apellido = apellido;
+    nuevoRepartidor->cansancio = 0;
+    nuevoRepartidor->cantidadDePedidos = 0;
+    return nuevoRepartidor;
 }
 
 double calcularIVA(double precio) {
