@@ -160,6 +160,15 @@ struct Repartidor
 	string apellido;
 };
 
+struct NodoRepartidor{
+    Repartidor repartidor;
+    NodoRepartidor *siguiente;
+};
+
+struct ListaRepartidor{
+    NodoRepartidor *primerRepartidor;
+};
+
 struct Semana
 {
 	ListaPedido *pedidos;
