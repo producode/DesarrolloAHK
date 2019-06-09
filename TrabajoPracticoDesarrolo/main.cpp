@@ -160,13 +160,24 @@ struct Repartidor
 	string apellido;
 };
 
-struct NodoRepartidor{
+struct NodoRepartidor
+{
     Repartidor repartidor;
     NodoRepartidor *siguiente;
 };
 
-struct ListaRepartidor{
+struct ListaRepartidor
+{
     NodoRepartidor *primerRepartidor;
+};
+
+struct Direccion
+{
+    string calle;
+    int altura;
+    string localidad;
+    int departamento;
+    int piso;
 };
 
 struct Semana
